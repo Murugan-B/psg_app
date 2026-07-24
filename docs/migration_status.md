@@ -1,6 +1,6 @@
 # VishnuMobile Flutter Migration Status
 
-**Overall Progress:** 50% (Phases 00-05 Completed)
+**Overall Progress:** 60% (Phases 00-06 Completed)
 
 ## Phases Status
 - [x] **Phase 00:** Full React Native Audit
@@ -13,8 +13,8 @@
 - [x] **Phase 03.5:** Reusable Component Library
 - [x] **Phase 04:** Shared Widgets
 - [x] **Phase 05:** Splash + Authentication (Mock)
-- [ ] **Phase 05.5:** Navigation Mapping
-- [ ] **Phase 06:** Navigation
+- [x] **Phase 05.5:** Navigation Mapping
+- [x] **Phase 06:** Navigation
 - [ ] **Phase 07:** Admin Module
 - [ ] **Phase 08:** POS Module
 - [ ] **Phase 09:** Inventory

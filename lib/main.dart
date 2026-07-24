@@ -11,16 +11,17 @@ void main() {
   );
 }
 
-class VishnuMobileApp extends StatelessWidget {
+class VishnuMobileApp extends ConsumerWidget {
   const VishnuMobileApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
     return MaterialApp.router(
       title: 'Vishnu Mobile',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      routerConfig: appRouter,
+      routerConfig: router,
     );
   }
 }
