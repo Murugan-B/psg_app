@@ -17,8 +17,7 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.primaryDark,
-        surface: AppColors.card,
-        background: AppColors.background,
+        surface: AppColors.background, // Background color as surface
         error: AppColors.danger,
         onPrimary: AppColors.textInverse,
         onSurface: AppColors.text,
@@ -61,7 +60,7 @@ class AppTheme {
       ),
       
       // Card Theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.card,
         elevation: 6, // Matching RN elevation
         shadowColor: const Color(0x1A000000),

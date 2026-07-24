@@ -9,7 +9,7 @@ class CustomTextField extends StatelessWidget {
   final String? placeholder;
   final TextEditingController? controller;
   final bool obscureText;
-  final IconData? icon;
+  final Widget? trailing;
   final TextInputType keyboardType;
 
   const CustomTextField({
@@ -18,7 +18,7 @@ class CustomTextField extends StatelessWidget {
     this.placeholder,
     this.controller,
     this.obscureText = false,
-    this.icon,
+    this.trailing,
     this.keyboardType = TextInputType.text,
   });
 
@@ -55,19 +55,19 @@ class CustomTextField extends StatelessWidget {
                   ),
                   decoration: InputDecoration(
                     hintText: placeholder,
+                    hintStyle: AppTextStyles.bodyMedium.copyWith(
+                      fontSize: 15,
+                      color: const Color(0xFFAAAAAA),
+                    ),
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
               ),
-              if (icon != null) ...[
+              if (trailing != null) ...[
                 const SizedBox(width: AppSpacing.p8),
-                Icon(
-                  icon,
-                  size: 16,
-                  color: AppColors.text.withOpacity(0.5),
-                ),
+                trailing!,
               ]
             ],
           ),
