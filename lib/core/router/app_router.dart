@@ -1,159 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'package:vishnu_mobile/features/auth/presentation/providers/auth_provider.dart';
-import 'package:vishnu_mobile/features/auth/presentation/screens/splash_screen.dart';
-import 'package:vishnu_mobile/features/auth/presentation/screens/login_screen.dart';
-import 'package:vishnu_mobile/features/auth/presentation/screens/pending_approval_screen.dart';
-import 'package:vishnu_mobile/core/router/scaffold_with_nav_bar.dart';
+import 'package:psg_app/features/auth/presentation/landing_screen.dart';
+import 'package:psg_app/features/auth/presentation/login_screen.dart';
+import 'package:psg_app/features/auth/presentation/role_selection_screen.dart';
+import 'package:psg_app/features/auth/presentation/register_screen.dart';
+import 'package:psg_app/features/assessments/presentation/assessment_list_screen.dart';
+import 'package:psg_app/features/assessments/presentation/take_assessment_screen.dart';
+import 'package:psg_app/features/assessments/presentation/assessment_results_screen.dart';
+import 'package:psg_app/features/resources/presentation/resource_list_screen.dart';
+import 'package:psg_app/features/resources/presentation/resource_detail_screen.dart';
+import 'package:psg_app/features/recommendations/presentation/recommendations_screen.dart';
+import 'package:psg_app/features/competency/presentation/competency_dashboard_screen.dart';
 
-import 'package:vishnu_mobile/features/admin/presentation/screens/admin_home_screen.dart';
-import 'package:vishnu_mobile/features/admin/presentation/screens/admin_stock_screen.dart';
-import 'package:vishnu_mobile/features/admin/presentation/screens/admin_pos_screen.dart';
-import 'package:vishnu_mobile/features/admin/presentation/screens/admin_staff_screen.dart';
-import 'package:vishnu_mobile/features/admin/presentation/screens/admin_report_screen.dart';
-import 'package:vishnu_mobile/features/admin/presentation/screens/admin_products_screen.dart';
+import 'package:psg_app/screens/student_main_screen.dart';
+import 'package:psg_app/screens/faculty_main_screen.dart';
+import 'package:psg_app/screens/admin_main_screen.dart';
+import 'package:psg_app/screens/faculty_generate_otp_screen.dart';
 
-import 'package:vishnu_mobile/features/staff/presentation/screens/staff_home_screen.dart';
-import 'package:vishnu_mobile/features/staff/presentation/screens/staff_pos_screen.dart';
-import 'package:vishnu_mobile/features/staff/presentation/screens/staff_attendance_screen.dart';
+class _AuthRefreshNotifier extends ChangeNotifier {
+  _AuthRefreshNotifier() {
+    Supabase.instance.client.auth.onAuthStateChange.listen((_) {
+      notifyListeners();
+    });
+  }
+}
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final appRouter = GoRouter(
+  initialLocation: '/',
+  debugLogDiagnostics: false,
+  refreshListenable: _AuthRefreshNotifier(),
+  redirect: (context, state) {
+    final session = Supabase.instance.client.auth.currentSession;
 
-final goRouterProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
-    navigatorKey: _rootNavigatorKey,
-    initialLocation: '/splash',
-    redirect: (context, state) {
-      final authState = ref.read(authProvider);
-      
-      // Wait for initialization or loading
-      if (authState is AsyncLoading) return null;
-      
-      final profile = authState.value;
-      final isLoggingIn = state.matchedLocation == '/login';
-      final isSplash = state.matchedLocation == '/splash';
-      
-      if (isSplash) return null;
+    final isAuthRoute = state.matchedLocation == '/' ||
+        state.matchedLocation == '/login' ||
+        state.matchedLocation == '/role_selection' ||
+        state.matchedLocation == '/register';
 
-      if (profile == null) {
-        return isLoggingIn ? null : '/login';
-      }
+    if (session == null) {
+      // If not logged in, they can only access auth routes
+      return isAuthRoute ? null : '/';
+    }
 
-      if (isLoggingIn) {
-        if (!profile.isApproved && !profile.isAdmin) return '/pending-approval';
-        if (profile.isAdmin) return '/admin/home';
-        return '/staff/home';
-      }
+    // If logged in, let them access anything.
+    // Wait, if they hit an auth route while logged in, they should go to a "resolver" route.
+    // The LandingScreen ('/') will act as our resolver if they are logged in!
+    if (isAuthRoute && state.matchedLocation != '/') {
+      return '/';
+    }
 
-      if (!profile.isApproved && !profile.isAdmin) {
-        return state.matchedLocation == '/pending-approval' ? null : '/pending-approval';
-      }
-
-      return null;
-    },
-    routes: [
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => SplashScreen(
-          onFinish: () {
-            context.go('/login');
-          },
-        ),
-      ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/pending-approval',
-        builder: (context, state) => const PendingApprovalScreen(),
-      ),
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
-        },
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/admin/home',
-                builder: (context, state) => const AdminHomeScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/admin/stock',
-                builder: (context, state) => const AdminStockScreen(),
-                routes: [
-                  GoRoute(
-                    path: 'products',
-                    builder: (context, state) => const AdminProductsScreen(),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/admin/pos',
-                builder: (context, state) => const AdminPosScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/admin/staff',
-                builder: (context, state) => const AdminStaffScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/admin/report',
-                builder: (context, state) => const AdminReportScreen(),
-              ),
-            ],
-          ),
-        ],
-      ),
-      StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return ScaffoldWithNavBar(navigationShell: navigationShell);
-        },
-        branches: [
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/staff/home',
-                builder: (context, state) => const StaffHomeScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/staff/pos',
-                builder: (context, state) => const StaffPosScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/staff/attendance',
-                builder: (context, state) => const StaffAttendanceScreen(),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ],
-  );
-});
+    return null;
+  },
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const LandingScreen(),
+    ),
+    GoRoute(
+      path: '/role_selection',
+      builder: (context, state) => const RoleSelectionScreen(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) {
+        final role = state.extra as String? ?? 'student';
+        return LoginScreen(role: role);
+      },
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) {
+        final role = state.extra as String? ?? 'student';
+        return RegisterScreen(role: role);
+      },
+    ),
+    GoRoute(
+      path: '/student_main',
+      builder: (context, state) => const StudentMainScreen(),
+    ),
+    GoRoute(
+      path: '/faculty_main',
+      builder: (context, state) => const FacultyMainScreen(),
+    ),
+    GoRoute(
+      path: '/admin_main',
+      builder: (context, state) => const AdminMainScreen(),
+    ),
+     GoRoute(
+       path: '/staff/attendance/create',
+       builder: (context, state) => const FacultyGenerateOtpScreen(),
+     ),
+     GoRoute(
+       path: '/assessments',
+       builder: (context, state) => const AssessmentListScreen(),
+     ),
+     GoRoute(
+       path: '/assessments/:id/take',
+       builder: (context, state) => TakeAssessmentScreen(assessmentId: state.pathParameters['id']!),
+     ),
+     GoRoute(
+       path: '/assessments/:id/results',
+       builder: (context, state) => AssessmentResultsScreen(assessmentId: state.pathParameters['id']!),
+     ),
+     GoRoute(
+       path: '/resources',
+       builder: (context, state) => const ResourceListScreen(),
+     ),
+     GoRoute(
+       path: '/resources/:id',
+       builder: (context, state) => ResourceDetailScreen(resourceId: state.pathParameters['id']!),
+     ),
+     GoRoute(
+       path: '/recommendations',
+       builder: (context, state) => const RecommendationsScreen(),
+     ),
+     GoRoute(
+       path: '/competencies',
+       builder: (context, state) => const CompetencyDashboardScreen(),
+     ),
+  ],
+);

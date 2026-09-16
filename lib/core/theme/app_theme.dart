@@ -1,74 +1,134 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'app_colors.dart';
-import 'app_text_styles.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  AppTheme._();
+  static const _primarySeed = Color(0xFF2E63EB);
+  static const _secondarySeed = Color(0xFF0F347F);
 
-  static ThemeData get lightTheme {
-    return ThemeData(
-      useMaterial3: true,
-      primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: AppColors.background,
-      
-      // Color Scheme mapping
-      colorScheme: const ColorScheme.light(
-        primary: AppColors.primary,
-        secondary: AppColors.primaryDark,
-        surface: AppColors.background, // Background color as surface
-        error: AppColors.danger,
-        onPrimary: AppColors.textInverse,
-        onSurface: AppColors.text,
-      ),
+  static ColorScheme get _lightColorScheme => ColorScheme.fromSeed(
+        seedColor: _primarySeed,
+        primary: _primarySeed,
+        secondary: _secondarySeed,
+        surface: Colors.white,
+        surfaceContainerLow: const Color(0xFFF8FAFC),
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: const Color(0xFF0F172A),
+        onSurfaceVariant: const Color(0xFF64748B),
+        outline: const Color(0xFFE2E8F0),
+        outlineVariant: const Color(0xFFF1F5F9),
+        error: const Color(0xFFEF4444),
+        onError: Colors.white,
+      );
 
-      // AppBar Theme (matching RN translucent/light-content status bar)
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.textInverse,
-        elevation: 0,
-        centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        titleTextStyle: AppTextStyles.h4,
-      ),
-
-      // Text Theme
-      textTheme: const TextTheme(
-        displayLarge: AppTextStyles.h1,
-        displayMedium: AppTextStyles.h2,
-        displaySmall: AppTextStyles.h3,
-        headlineMedium: AppTextStyles.h4,
-        bodyLarge: AppTextStyles.bodyLarge,
-        bodyMedium: AppTextStyles.bodyMedium,
-        bodySmall: AppTextStyles.bodySmall,
-        labelLarge: AppTextStyles.buttonText,
-        labelSmall: AppTextStyles.micro,
-      ),
-
-      // Elevated Button Theme (Primary Button)
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.textInverse,
-          textStyle: AppTextStyles.buttonText,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+  static ThemeData get lightTheme => ThemeData(
+        useMaterial3: true,
+        colorScheme: _lightColorScheme,
+        textTheme: GoogleFonts.interTextTheme(
+          TextTheme(
+            headlineLarge: GoogleFonts.inter(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF0F172A),
+            ),
+            headlineMedium: GoogleFonts.inter(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF0F172A),
+            ),
+            headlineSmall: GoogleFonts.inter(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+            titleLarge: GoogleFonts.inter(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+            titleMedium: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF0F172A),
+            ),
+            bodyLarge: GoogleFonts.inter(
+              fontSize: 16,
+              color: const Color(0xFF0F172A),
+            ),
+            bodyMedium: GoogleFonts.inter(
+              fontSize: 14,
+              color: const Color(0xFF475569),
+            ),
+            bodySmall: GoogleFonts.inter(
+              fontSize: 12,
+              color: const Color(0xFF94A3B8),
+            ),
+            labelLarge: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ),
-      ),
-      
-      // Card Theme
-      cardTheme: CardThemeData(
-        color: AppColors.card,
-        elevation: 6, // Matching RN elevation
-        shadowColor: const Color(0x1A000000),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.border, width: 1),
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: const Color(0xFF0F172A),
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF0F172A),
+          ),
         ),
-      ),
-    );
-  }
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: Color(0xFF2E63EB),
+          unselectedItemColor: Color(0xFF94A3B8),
+          selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
+          unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 11),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFF2E63EB),
+          foregroundColor: Colors.white,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _primarySeed,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: _primarySeed, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+      );
+
+  static ThemeData get darkTheme => ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _primarySeed,
+          brightness: Brightness.dark,
+          primary: _primarySeed,
+          secondary: _secondarySeed,
+        ),
+        textTheme: GoogleFonts.interTextTheme(),
+      );
 }
